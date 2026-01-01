@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "algorithms.image", "algorithms.image\algorithms.image.csproj", "{67FD5637-1A25-4B8D-A2F1-8F375E7C3A47}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "algorithms.graph", "algorithms.graph\algorithms.graph.csproj", "{CF3A36E3-B41C-4066-BEF6-F0D3CADF7473}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "algorithms.testclient", "algorithms.testclient\algorithms.testclient.csproj", "{96AEF00E-BFBE-47AB-98DE-5087564B889C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{67FD5637-1A25-4B8D-A2F1-8F375E7C3A47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67FD5637-1A25-4B8D-A2F1-8F375E7C3A47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67FD5637-1A25-4B8D-A2F1-8F375E7C3A47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67FD5637-1A25-4B8D-A2F1-8F375E7C3A47}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF3A36E3-B41C-4066-BEF6-F0D3CADF7473}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF3A36E3-B41C-4066-BEF6-F0D3CADF7473}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF3A36E3-B41C-4066-BEF6-F0D3CADF7473}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF3A36E3-B41C-4066-BEF6-F0D3CADF7473}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96AEF00E-BFBE-47AB-98DE-5087564B889C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96AEF00E-BFBE-47AB-98DE-5087564B889C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96AEF00E-BFBE-47AB-98DE-5087564B889C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96AEF00E-BFBE-47AB-98DE-5087564B889C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
