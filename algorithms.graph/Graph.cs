@@ -20,11 +20,20 @@ public class Graph
         _graphType = graphType;
     }
 
-    public Graph AddVertice(Vertice vertice, IList<Edge>? edges = null)
+    public (Vertice, IList<Edge>) GetVerticeById(Int64 id)
+    {
+        lock (_lock)
+        {
+            var vertice = _vertices.Single(x => x.Key.Id == id);
+            return new(vertice.Key, vertice.Value);
+        }
+    }
+
+    public Graph AddVertice(Vertice vertice)
     {
         lock(_lock)
-        { 
-            _vertices.TryAdd(vertice, edges ?? new List<Edge>());
+        {
+            _vertices.TryAdd(vertice, new List<Edge>());
         }
         return this;
     }
@@ -38,13 +47,31 @@ public class Graph
         return this;
     }
 
-    public Graph AddEdge(Vertice vertice, Edge edge)
+    public Graph AddEdge(Vertice verticeFrom, Vertice verticeTo, Int64? weight = null)
     {
         lock (_lock)
         {
-            if (_vertices.ContainsKey(vertice))
-                if (!_vertices.SingleOrDefault(x => x.Key == vertice).Value.Contains(edge))
-                    _vertices.SingleOrDefault(x => x.Key == vertice).Value.Add(edge);
+            if (_graphType == GraphType.Directed || _graphType == GraphType.Undirected)
+            {
+                weight = 0;
+            }
+
+            switch (_graphType)
+            {
+                case GraphType.Directed:
+                case GraphType.WeighedDirected:
+                    if (!_vertices.Any(x => x.Key == verticeTo))
+                        throw new ArgumentOutOfRangeException();
+                    _vertices.Single(x => x.Key == verticeFrom).Value.Add(new Edge(verticeTo.Id, weight));
+                    break;
+                case GraphType.Undirected:
+                case GraphType.WeighedUndirected:
+                    _vertices.Single(x => x.Key == verticeFrom).Value.Add(new Edge(verticeTo.Id, weight));
+                    _vertices.Single(x => x.Key == verticeTo).Value.Add(new Edge(verticeFrom.Id, weight));
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
         return this;
     }
@@ -53,8 +80,7 @@ public class Graph
     {
         lock (_lock)
         {
-            if (_vertices.ContainsKey(vertice))
-                _vertices.SingleOrDefault(x => x.Key == vertice).Value.Remove(edge);
+            
         }
         return this;
     }

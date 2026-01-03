@@ -23,4 +23,16 @@ public class Vertice : IComparable<Vertice>
     {
         return _id.CompareTo(vertice._id);
     }
+
+    public bool Equals(Vertice vertice)
+    {
+        if (vertice is null)
+        {
+            return false; 
+        }
+        return _id == vertice.Id;
+    } 
+    
+    public override bool Equals(object obj) => Equals(obj as Vertice); 
+    public override int GetHashCode() => Id.GetHashCode();
 }

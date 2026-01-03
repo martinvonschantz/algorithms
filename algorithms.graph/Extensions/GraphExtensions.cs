@@ -17,7 +17,7 @@ public static class GraphExtensions
                     sb.Append(" Edges: ");
                     foreach (var edge in keyValuePair.Value)
                     {
-                        sb.Append($" {edge.To}");
+                        sb.Append($" {edge.ToVerticeId}");
                         if (edge.Weight != 0)
                         {
                             sb.Append($" Weight: {edge.Weight}");

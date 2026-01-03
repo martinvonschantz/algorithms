@@ -3,7 +3,7 @@ namespace algorithms.graph;
 public class Edge
 {
     private Int64 _to;
-    public Int64 To
+    public Int64 ToVerticeId
     {
         get => _to;
         set => _to = value;
