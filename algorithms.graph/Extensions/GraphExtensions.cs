@@ -6,18 +6,26 @@ public static class GraphExtensions
 {
     extension(Graph source)
     {
-        public string ToString
+        public string Print
         {
             get
             {
                 StringBuilder sb = new StringBuilder();
                 foreach (var keyValuePair in source.Vertices)
                 {
-                    sb.Append("Key: " + keyValuePair.Key);
-                    sb.Append(" Value: " + keyValuePair.Value);
+                    sb.Append($"Vertice: {keyValuePair.Key.Id} Name: {keyValuePair.Key.Name}");
+                    sb.Append(" Edges: ");
+                    foreach (var edge in keyValuePair.Value)
+                    {
+                        sb.Append($" {edge.To}");
+                        if (edge.Weight != 0)
+                        {
+                            sb.Append($" Weight: {edge.Weight}");
+                        }
+                            
+                    }
                     sb.Append("\n");
                 }
-
                 return sb.ToString();
             }
         }
