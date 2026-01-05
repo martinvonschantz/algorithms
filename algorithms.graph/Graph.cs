@@ -9,23 +9,20 @@ public class Graph
     private GraphType _graphType;
     private Dictionary<Vertice, IList<Edge>> _vertices = new();
     private object _lock = new();
-    public Dictionary<Vertice, IList<Edge>> Vertices
-    {
-        get => _vertices;
-    }
+    public Dictionary<Vertice, IList<Edge>> Vertices { get => _vertices; }
     public Int64 Count  => _vertices.Count;
+    public GraphType GraphType { get => _graphType; }
     
     public Graph(GraphType graphType)
     {
         _graphType = graphType;
     }
 
-    public (Vertice, IList<Edge>) GetVerticeById(Int64 id)
+    public Vertice GetVerticeById(Int64 id)
     {
         lock (_lock)
         {
-            var vertice = _vertices.Single(x => x.Key.Id == id);
-            return new(vertice.Key, vertice.Value);
+            return _vertices.Single(x => x.Key.Id == id).Key;
         }
     }
 
@@ -76,11 +73,27 @@ public class Graph
         return this;
     }
 
-    public Graph RemoveEdge(Vertice vertice, Edge edge)
+    public Graph RemoveEdge(Vertice verticeFrom, Vertice verticeTo)
     {
         lock (_lock)
         {
-            
+            switch (_graphType)
+            {
+                case GraphType.Directed:
+                case GraphType.WeighedDirected:
+                    var vertice = _vertices.Single(x => x.Key == verticeFrom);
+                    vertice.Value.Remove(vertice.Value.Single(x => x.ToVerticeId == verticeTo.Id));
+                    break;
+                case GraphType.Undirected:
+                case GraphType.WeighedUndirected:
+                    var vertice1 = _vertices.Single(x => x.Key == verticeFrom);
+                    var vertice2 =  _vertices.Single(x => x.Key == verticeTo);
+                    vertice1.Value.Remove(vertice1.Value.Single(x => x.ToVerticeId == vertice1.Key.Id));
+                    vertice2.Value.Remove(vertice2.Value.Single(x => x.ToVerticeId == vertice2.Key.Id));
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
         return this;
     }
