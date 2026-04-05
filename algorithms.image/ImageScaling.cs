@@ -58,10 +58,72 @@ public static class ImageScaling
         return result;
     }
 
+    public static Image ScaleTrilinear(Image source, Int32 newWidth, Int32 newHeight)
+    {
+        if (source is null)
+            throw new ArgumentNullException(nameof(source));
+        if (newWidth <= 0)
+            throw new ArgumentOutOfRangeException(nameof(newWidth));
+        if (newHeight <= 0)
+            throw new ArgumentOutOfRangeException(nameof(newHeight));
+
+        if (newWidth >= source.Width && newHeight >= source.Height)
+            return Scale(source, newWidth, newHeight);
+
+        var mipmaps = BuildMipChain(source);
+        var scaleX = (Single)source.Width / newWidth;
+        var scaleY = (Single)source.Height / newHeight;
+        var desiredScale = MathF.Max(scaleX, scaleY);
+        var lambda = MathF.Log2(MathF.Max(1f, desiredScale));
+        var level0 = Math.Clamp((Int32)MathF.Floor(lambda), 0, mipmaps.Count - 1);
+        var level1 = Math.Min(level0 + 1, mipmaps.Count - 1);
+        var t = lambda - level0;
+
+        var img0 = Scale(mipmaps[level0], newWidth, newHeight);
+        if (level1 == level0 || t <= 0f)
+            return img0;
+
+        var img1 = Scale(mipmaps[level1], newWidth, newHeight);
+        var result = new Image(newWidth, newHeight);
+        var pixelCount = newWidth * newHeight;
+
+        for (var i = 0; i < pixelCount; i++)
+        {
+            var index = i * 4;
+            result.Data[index] = Lerp(img0.Data[index], img1.Data[index], t);
+            result.Data[index + 1] = Lerp(img0.Data[index + 1], img1.Data[index + 1], t);
+            result.Data[index + 2] = Lerp(img0.Data[index + 2], img1.Data[index + 2], t);
+            result.Data[index + 3] = Lerp(img0.Data[index + 3], img1.Data[index + 3], t);
+        }
+
+        return result;
+    }
+
     private static byte Bilinear(byte c00, byte c10, byte c01, byte c11, Single xWeight, Single yWeight)
     {
         var top = c00 + (c10 - c00) * xWeight;
         var bottom = c01 + (c11 - c01) * xWeight;
         return ImageMath.ClampToByte(top + (bottom - top) * yWeight);
+    }
+
+    private static byte Lerp(byte a, byte b, Single t)
+    {
+        return ImageMath.ClampToByte(a + (b - a) * t);
+    }
+
+    private static List<Image> BuildMipChain(Image source)
+    {
+        var mipmaps = new List<Image> { source };
+        var current = source;
+
+        while (current.Width > 1 || current.Height > 1)
+        {
+            var nextWidth = Math.Max(1, current.Width / 2);
+            var nextHeight = Math.Max(1, current.Height / 2);
+            current = Scale(current, nextWidth, nextHeight);
+            mipmaps.Add(current);
+        }
+
+        return mipmaps;
     }
 }
