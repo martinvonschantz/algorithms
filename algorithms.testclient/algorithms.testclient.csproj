@@ -10,6 +10,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\algorithms.graph\algorithms.graph.csproj" />
+      <ProjectReference Include="..\algorithms.image\algorithms.image.csproj" />
     </ItemGroup>
 
     <ItemGroup>
