@@ -1,38 +1,40 @@
 namespace algorithms.graph;
 
-public class Vertice : IComparable<Vertice>
+public class Vertice<T> : IComparable<Vertice<T>>
 {
     private Int64 _id;
+    private Func<T> _node;
+    
     public Int64 Id
     {
         get => _id;
     }
-    private string _name;
-    public string Name
+    
+    public Func<T> Node
     {
-        get => _name;
+        get => _node;
     }
     
-    public Vertice(Int64 id,  string name)
+    public Vertice(Int64 id, Func<T> node)
     {
         _id = id;
-        _name = name;
+        _node = node;
     }
     
-    public int CompareTo(Vertice vertice) 
+    public int CompareTo(Vertice<T>? vertice) 
     {
+        if (vertice is null)
+            throw new  ArgumentNullException(nameof(vertice));
         return _id.CompareTo(vertice._id);
     }
 
-    public bool Equals(Vertice vertice)
+    public bool Equals(Vertice<T>? vertice)
     {
         if (vertice is null)
-        {
-            return false; 
-        }
+            throw new ArgumentNullException(nameof(vertice));
         return _id == vertice.Id;
     } 
     
-    public override bool Equals(object obj) => Equals(obj as Vertice); 
+    public override bool Equals(object obj) => Equals(obj as Vertice<T>); 
     public override int GetHashCode() => Id.GetHashCode();
 }

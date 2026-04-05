@@ -2,14 +2,14 @@
 
 namespace algorithms.graph;
 
-[ClassInterface(ClassInterfaceType.AutoDual)]
+[ClassInterface(ClassInterfaceType.AutoDispatch)]
 [ComVisible(true)]
-public class Graph
+public class Graph<T>
 {
     private GraphType _graphType;
-    private Dictionary<Vertice, IList<Edge>> _vertices = new();
+    private Dictionary<Vertice<T>, IList<Edge>> _vertices = new();
     private object _lock = new();
-    public Dictionary<Vertice, IList<Edge>> Vertices { get => _vertices; }
+    public Dictionary<Vertice<T>, IList<Edge>> Vertices { get => _vertices; }
     public Int64 Count  => _vertices.Count;
     public GraphType GraphType { get => _graphType; }
     
@@ -18,7 +18,19 @@ public class Graph
         _graphType = graphType;
     }
 
-    public Vertice GetVerticeById(Int64 id)
+    public IReadOnlyList<Edge> GetEdges(Vertice<T> vertice)
+    {
+        lock (_lock)
+        {
+            if (!_vertices.TryGetValue(vertice, out var edges))
+            {
+                throw new ArgumentOutOfRangeException(nameof(vertice));
+            }
+            return edges.ToList();
+        }
+    }
+
+    public Vertice<T> GetVerticeById(Int64 id)
     {
         lock (_lock)
         {
@@ -26,7 +38,7 @@ public class Graph
         }
     }
 
-    public Graph AddVertice(Vertice vertice)
+    public Graph<T> AddVertice(Vertice<T> vertice)
     {
         lock(_lock)
         {
@@ -35,7 +47,7 @@ public class Graph
         return this;
     }
 
-    public Graph RemoveVertice(Vertice vertice)
+    public Graph<T> RemoveVertice(Vertice<T> vertice)
     {
         lock (_lock)
         {
@@ -44,7 +56,7 @@ public class Graph
         return this;
     }
 
-    public Graph AddEdge(Vertice verticeFrom, Vertice verticeTo, Int64? weight = null)
+    public Graph<T> AddEdge(Vertice<T> verticeFrom, Vertice<T> verticeTo, Int64? weight = null)
     {
         lock (_lock)
         {
@@ -57,12 +69,18 @@ public class Graph
             {
                 case GraphType.Directed:
                 case GraphType.WeighedDirected:
+                    if (!_vertices.ContainsKey(verticeFrom))
+                        throw new ArgumentOutOfRangeException(nameof(verticeFrom));
                     if (!_vertices.Any(x => x.Key == verticeTo))
                         throw new ArgumentOutOfRangeException();
                     _vertices.Single(x => x.Key == verticeFrom).Value.Add(new Edge(verticeTo.Id, weight));
                     break;
                 case GraphType.Undirected:
                 case GraphType.WeighedUndirected:
+                    if (!_vertices.ContainsKey(verticeFrom))
+                        throw new ArgumentOutOfRangeException(nameof(verticeFrom));
+                    if (!_vertices.ContainsKey(verticeTo))
+                        throw new ArgumentOutOfRangeException(nameof(verticeTo));
                     _vertices.Single(x => x.Key == verticeFrom).Value.Add(new Edge(verticeTo.Id, weight));
                     _vertices.Single(x => x.Key == verticeTo).Value.Add(new Edge(verticeFrom.Id, weight));
                     break;
@@ -73,7 +91,7 @@ public class Graph
         return this;
     }
 
-    public Graph RemoveEdge(Vertice verticeFrom, Vertice verticeTo)
+    public Graph<T> RemoveEdge(Vertice<T> verticeFrom, Vertice<T> verticeTo)
     {
         lock (_lock)
         {
@@ -88,8 +106,8 @@ public class Graph
                 case GraphType.WeighedUndirected:
                     var vertice1 = _vertices.Single(x => x.Key == verticeFrom);
                     var vertice2 =  _vertices.Single(x => x.Key == verticeTo);
-                    vertice1.Value.Remove(vertice1.Value.Single(x => x.ToVerticeId == vertice1.Key.Id));
-                    vertice2.Value.Remove(vertice2.Value.Single(x => x.ToVerticeId == vertice2.Key.Id));
+                    vertice1.Value.Remove(vertice1.Value.Single(x => x.ToVerticeId == vertice2.Key.Id));
+                    vertice2.Value.Remove(vertice2.Value.Single(x => x.ToVerticeId == vertice1.Key.Id));
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

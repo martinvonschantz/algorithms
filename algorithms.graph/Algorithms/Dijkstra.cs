@@ -2,69 +2,64 @@ namespace algorithms.graph.Algorithms;
 
 public static class DijkstraShortestPath
 {
-    extension(Graph source)
+    public static IReadOnlyList<long> Dijkstra<T>(this Graph<T> source, Vertice<T> start)
     {
-        public IList<Vertice> Dijkstra(Vertice start)
+        if (source.GraphType != GraphType.WeighedDirected && source.GraphType != GraphType.WeighedUndirected)
         {
-            if (source.GraphType != GraphType.WeighedDirected)
-            {
-                throw new ArgumentException($"Invalid graph type: {source.GraphType}");
-            }
-
-            var V = source.Vertices.Count();
-            var pq = new PriorityQueue<Vertice, Int64>();
-            Int64[] distance = new Int64[V];
-            for (Int64 i = 0; i < V; i++)
-                distance[i] = Int64.MaxValue;   
-            
-            distance[start.Id] = 0;
-            pq.Enqueue(start, 0);
-
-            while (pq.Count > 0)
-            {
-                 pq.TryDequeue(out Vertice vertice, out Int64 length);
-                 if (length > distance[vertice.Id])
-                 {
-                     
-                 }
-            }
-            
-            return new List<Vertice>();
+            throw new ArgumentException($"Invalid graph type: {source.GraphType}");
         }
-    }
 
-    // static List<int> dijkstra(List<List<int[]>> adj, int src)
-    // {
-    //     // Process the queue until all reachable vertices are finalized
-    //     while (pq.Count > 0)
-    //     {
-    //         pq.TryDequeue(out int u, out int d);
-    //
-    //         // If this distance is not the latest shortest one, skip it
-    //         if (d > dist[u])
-    //             continue;
-    //
-    //         // Explore all adjacent vertices
-    //         foreach (var p in adj[u])
-    //         {
-    //             int v = p[0];
-    //             int w = p[1];
-    //
-    //             // If we found a shorter path to v through u, update it
-    //             if (dist[u] + w < dist[v])
-    //             {
-    //                 dist[v] = dist[u] + w;
-    //                 pq.Enqueue(v, dist[v]);
-    //             }
-    //         }
-    //     }
-    //
-    //     // Convert result to List for output
-    //     List<int> result = new List<int>();
-    //     foreach (int d in dist)
-    //         result.Add(d);
-    //
-    //     // Return the final shortest distances from the source
-    //     return result;
-    // }
+        var vertices = source.Vertices.Keys.ToList();
+        var verticesById = vertices.ToDictionary(v => v.Id);
+
+        if (!verticesById.ContainsKey(start.Id))
+        {
+            throw new ArgumentOutOfRangeException(nameof(start));
+        }
+
+        int voiceCount = vertices.Count;
+        var queue = new PriorityQueue<Vertice<T>, long>();
+
+        var distances = new Dictionary<long, long>(voiceCount);
+        foreach (var vertice in vertices)
+        {
+            distances[vertice.Id] = long.MaxValue;
+        }
+
+        distances[start.Id] = 0;
+        queue.Enqueue(start, 0);
+
+        while (queue.TryDequeue(out var element, out var distU))
+        {
+            if (element is null)
+            {
+                continue;
+            }
+
+            if (distU > distances[element.Id])
+                continue;
+
+            foreach (var edge in source.GetEdges(element))
+            {
+                if (!verticesById.TryGetValue(edge.ToVerticeId, out var v))
+                {
+                    continue;
+                }
+
+                long weight = edge.Weight;
+
+                long newDist = distU + weight;
+
+                if (newDist < distances[v.Id])
+                {
+                    distances[v.Id] = newDist;
+                    queue.Enqueue(v, newDist);
+                }
+            }
+        }
+        return vertices
+            .OrderBy(v => v.Id)
+            .Select(v => distances[v.Id])
+            .ToList();
+    }
 }

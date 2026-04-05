@@ -4,30 +4,24 @@ namespace algorithms.graph.Extensions;
 
 public static class GraphExtensions
 {
-    extension(Graph source)
+    public static string Print<T>(this Graph<T> source)
     {
-        public string Print
+        StringBuilder sb = new StringBuilder();
+        foreach (var keyValuePair in source.Vertices)
         {
-            get
+            sb.Append($"Vertice: {keyValuePair.Key.Id} Name: {keyValuePair.Key.Node}");
+            sb.Append(" Edges: ");
+            foreach (var edge in keyValuePair.Value)
             {
-                StringBuilder sb = new StringBuilder();
-                foreach (var keyValuePair in source.Vertices)
+                sb.Append($" {edge.ToVerticeId}");
+                if (edge.Weight != 0)
                 {
-                    sb.Append($"Vertice: {keyValuePair.Key.Id} Name: {keyValuePair.Key.Name}");
-                    sb.Append(" Edges: ");
-                    foreach (var edge in keyValuePair.Value)
-                    {
-                        sb.Append($" {edge.ToVerticeId}");
-                        if (edge.Weight != 0)
-                        {
-                            sb.Append($" Weight: {edge.Weight}");
-                        }
-                            
-                    }
-                    sb.Append("\n");
+                    sb.Append($" Weight: {edge.Weight}");
                 }
-                return sb.ToString();
             }
+            sb.Append("\n");
         }
+
+        return sb.ToString();
     }
 }

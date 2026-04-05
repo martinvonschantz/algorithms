@@ -1,35 +1,31 @@
-﻿// using algorithms.graph;
-// using algorithms.graph.Extensions;
-//
-// Graph graph = new Graph(GraphType.Undirected)
-//     .AddVertice(new Vertice(1, "node1"))
-//     .AddVertice(new Vertice(2, "node2"))
-//     .AddVertice(new Vertice(3, "node3"))
-//     .AddVertice(new Vertice(4, "node4"));
-//
-// graph.AddEdge(graph.GetVerticeById(1), graph.GetVerticeById(2));
-// graph.AddEdge(graph.GetVerticeById(1), graph.GetVerticeById(4));
-// graph.AddEdge(graph.GetVerticeById(2), graph.GetVerticeById(3));
-//
-//
-//
-// Console.WriteLine(graph.Print);
-// Console.ReadLine();
-
-using algorithms.graph;
+﻿using algorithms.graph;
 using NUnit.Framework;
 
-[NUnit.Framework.TestFixture]
+namespace algorithms.testclient;
+
+[TestFixture]
 public class UndirectedGraphTests
 {
-    [TestCase]
-    public static void CreateUndirectedGraph()
+    [Test]
+    public void CreateUndirectedGraph()
     {
         Graph<int> graph = new Graph<int>(GraphType.Undirected)
-            .AddVertice(new Vertice(1, () => { return 1; }))
-            .AddVertice(new Vertice(2, () => { return 1; }))
-            .AddVertice(new Vertice(3, () => { return 1; }))
-            .AddVertice(new Vertice(4, () => { return 1; }));
+            .AddVertice(new Vertice<int>(1, () => 1))
+            .AddVertice(new Vertice<int>(2, () => 1))
+            .AddVertice(new Vertice<int>(3, () => 5))
+            .AddVertice(new Vertice<int>(4, () => 3));
+        
+        graph.AddEdge(graph.GetVerticeById(1), graph.GetVerticeById(2));
+        graph.AddEdge(graph.GetVerticeById(1), graph.GetVerticeById(4));
+        graph.AddEdge(graph.GetVerticeById(2), graph.GetVerticeById(3));
+
+        Assert.That(graph.Count, Is.EqualTo(4));
+    }
+
+    [Test]
+    public void CreateUndirectedGraphWithEdge()
+    {
+        
     }
 }
 
