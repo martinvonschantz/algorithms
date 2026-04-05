@@ -1,0 +1,6 @@
+<Project>
+  <PropertyGroup>
+    <DisableWorkloadResolver>true</DisableWorkloadResolver>
+    <MSBuildEnableWorkloadResolver>false</MSBuildEnableWorkloadResolver>
+  </PropertyGroup>
+</Project>
